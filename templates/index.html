@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Определение оператора по номеру телефона</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
+    <style>
+      html, body {
+        margin: 0;
+        height: 100%;
+      }
+      body {
+        background: #1E1F20;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 16px;
+        color: #BEC2D0;
+        font-family: 'Roboto', sans-serif;
+      }
+      .container-form {
+        padding: 1.5rem 1rem;
+        position: relative;
+        top: 133px;
+        background: #35363A;
+        border-radius: 0.6rem;
+        max-width: 500px;
+        height: 350px;
+      }
+      .errors {
+          color: #db7272;
+      }
+    </style>
+    <script>
+      window.addEventListener("DOMContentLoaded", function() {
+          [].forEach.call( document.querySelectorAll('.phone'), function(input) {
+          var keyCode;
+          function mask(event) {
+              event.keyCode && (keyCode = event.keyCode);
+              var pos = this.selectionStart;
+              if (pos < 3) event.preventDefault();
+              var matrix = "+7 (___)-___-__-__",
+                  i = 0,
+                  def = matrix.replace(/\D/g, ""),
+                  val = this.value.replace(/\D/g, ""),
+                  new_value = matrix.replace(/[_\d]/g, function(a) {
+                      return i < val.length ? val.charAt(i++) || def.charAt(i) : a
+                  });
+              i = new_value.indexOf("_");
+              if (i != -1) {
+                  i < 5 && (i = 3);
+                  new_value = new_value.slice(0, i)
+              }
+              var reg = matrix.substr(0, this.value.length).replace(/_+/g,
+                  function(a) {
+                      return "\\d{1," + a.length + "}"
+                  }).replace(/[+()]/g, "\\$&");
+
+              reg = new RegExp("^" + reg + "$");
+              if (!reg.test(this.value) || this.value.length < 5 || keyCode > 47 && keyCode < 58) this.value = new_value;
+              if (event.type == "blur" && this.value.length < 5)  this.value = ""
+          }
+          input.addEventListener("input", mask, false);
+          input.addEventListener("focus", mask, false);
+          input.addEventListener("blur", mask, false);
+          input.addEventListener("keydown", mask, false)
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <main>
+      <div class="container container-form">
+        <div class="mb-5">
+         <h2 class="text-center">Определение оператора по номеру телефона</h2>
+        </div>
+        <div class="mb-5">
+          <form class="form-inline justify-content-center" action="">
+            <div class="form-group">
+              <label class="mr-2" for="phone">Телефон:</label>
+              <input class="form-control phone mr-2" type="text" name="phone" id="phone"/>
+            </div>
+            <button type="submit" class="btn btn-primary">Искать</button>
+         </form>
+        </div>
+        <div class="info px-3" style="display: none">
+          <div><strong class="mr-3">Телефон:</strong><span class="phone-number"></span></div>
+          <div><strong class="mr-3">Оператор:</strong><span class="operator"></span></div>
+          <div><strong class="mr-3">Регион:</strong><span class="region"></span></div>
+        </div>
+        <div class="errors px-3" style="display: none"></div>
+      </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
+    <script>
+      $(document).ready(function() {
+        $('form').submit(function(event) {
+          event.preventDefault();
+          $('.info').hide();
+          $('.errors').hide();
+          $('.error').remove();
+          $.ajax({
+            type: 'GET',
+            url: '/api/v1/phone-info/',
+            data: {'number': $(this).find('.phone').val().replace(/\D/g, '')},
+            success: function(response) {
+              if (Object.keys(response).length !== 0) {
+                console.log('response: ', response);
+                $('.phone-number').text(response.number);
+                $('.operator').text(response.operator);
+                $('.region').text(response.region);
+                $('.info').show();
+              } else {
+                let msg = 'Данный номер отсутствует в базе';
+                $('.errors').append('<div class="error"><span>' + msg + '</span></div>');
+                $('.errors').show();
+              }
+            },
+            error: function(jqXHR) {
+              console.log(jqXHR.responseJSON);
+              Object.keys(jqXHR.responseJSON).forEach(k => {
+                console.log(k, ':', jqXHR.responseJSON[k][0]);
+                $('.errors').append('<div class="error"><span>' + jqXHR.responseJSON[k][0] + '</span></div>');
+                $('.errors').show();
+              });
+            }
+          });
+        });
+      });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+logger:
+  level: info
+loader:
+  target: https://opendata.digital.gov.ru/registry/numeric/downloads/
+db:
+  dbname: phonedb
+  user: user_phone
+  password: 12345
+  host: localhost
+  port: 5432

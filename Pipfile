@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "5.0.1"
+django-dotenv = "1.4.2"
+djangorestframework = "3.14"
+psycopg2-binary = "2.9.9"
+drf-yasg = "1.21.7"
+httpx = "0.26.0"
+certifi = "*"
+pandas = "*"
+
+[dev-packages]
+wemake-python-styleguide = "0.18.0"
+isort = "5.13.2"
+black = "24.1.1"
+flake8-pyproject = "1.2.3"
+
+[requires]
+python_version = "3.11"

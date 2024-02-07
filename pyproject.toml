@@ -1,0 +1,50 @@
+[project]
+version = "2024.2.4"
+authors = [
+  {name = "Krivtsov Aleksey", email = "kalex13@bk.ru"},
+]
+
+[tool.isort]
+multi_line_output = 3
+line_length = 88
+include_trailing_comma = true
+combine_as_imports = true
+split_on_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+
+[tool.black]
+line_length = 88
+skip-string-normalization = true
+
+[tool.flake8]
+max-line-complexity = 18
+max-local-variables = 9
+max-line-length = 120
+max-annotations-complexity = 6
+max-complexity = 10
+unused-arguments-ignore-variadic-names=true
+unused-arguments-ignore-abstract-functions=true
+ignore = ['D100', 'D101', 'D102', 'D103', 'D104', 'D105', 'D106',
+         'D107', 'DAR101', 'DAR102', 'DAR003', 'DAR201', 'D401',
+         'DAR401', 'D202', 'D400', 'D205',
+         'N815',
+         'C101',
+         'T001', 'T001',
+         'WPS305', 'WPS432', 'WPS110', 'WPS226', 'WPS323', 'WPS326',
+         'WPS412', 'WPS201', 'W504', 'WPS306', 'WPS115', 'WPS348',
+         'WPS202', 'WPS232',
+         'U101', 'E203']
+exclude = ['*test_*.py',
+          'app/migrations/*',
+          'app/models/__init__.py',
+          'manage.py',
+          'phone_info/*',
+          'docker/*',
+          'deploy/*',
+          'templates/*',
+          'venv',
+          '*.csv',
+          '*.yml',
+          '*.yaml']
